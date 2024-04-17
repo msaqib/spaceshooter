@@ -10,9 +10,10 @@ export const Config = {
         "startScene": Game
     },
     hero: {
-        position: {
-            x: 350,
-            y: 595
-        }
+        velocity: 2
+    },
+    fighter: {
+        velocity: 2,
+        probability: 0.01
     }
 }

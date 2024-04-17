@@ -4,6 +4,7 @@ import { App } from '../system/App';
 export class Hero {
     constructor() {
         this.location = {x: 20, y: Math.floor(window.innerHeight / 2)}
+        this.velocity = App.config.hero.velocity
         this.createSprite();
         this.dy = 0
     }
@@ -18,7 +19,6 @@ export class Hero {
                 App.res("exhaust3"),
                 App.res("exhaust4")
             ]);
-    
             this.setSpriteLocation()
             this.sprite.loop = true;
             this.sprite.animationSpeed = 0.1;
@@ -41,25 +41,42 @@ export class Hero {
     }
 
     moveUp() {
-        this.dy = -1
-        App.app.ticker.add(this.update.bind(this))
+        if (this.dy != -1) {
+            this.dy = -1
+            if (!this.ticker) {
+                this.ticker = new PIXI.Ticker
+                this.ticker.add(this.update.bind(this))
+                this.ticker.start()
+            }
+            
+        }
         // this.update()
     }
 
     moveDown() {
-        this.dy = 1
-        // // App.app.ticker.add(this.update.bind(this))
-        // this.update()
+        if (this.dy != 1) {
+            this.dy = 1
+
+            if (!this.ticker) {
+                this.ticker = new PIXI.Ticker
+                this.ticker.add(this.update.bind(this))
+                this.ticker.start()
+            }
+        }
     }
 
     straighten() {
         this.dy = 0
-        App.app.ticker.remove(this.update)
+        this.ticker.remove(this.update)
+        this.ticker.destroy()
+        this.ticker = null
     }
 
-    update() {
-        if (this.location.y >= (this.sprite.height - this.dy) && this.location.y <= (window.innerHeight - this.sprite.height - this.dy)) {
-            this.location.y += this.dy
+    update(dt) {
+        const increment = (this.dy * this.velocity * dt.deltaTime)
+        if (this.location.y >= (this.sprite.height - increment) && this.location.y <= (window.innerHeight - this.sprite.height - increment)) {
+            
+            this.location.y += increment
         }
         this.setSpriteLocation()
         this.setShipLocation()
