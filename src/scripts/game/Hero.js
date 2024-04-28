@@ -1,11 +1,14 @@
 import * as PIXI from "pixi.js";
 import { App } from '../system/App';
+import * as Matter from 'matter-js'
+import {sound} from '@pixi/sound'
 
 export class Hero {
     constructor() {
         this.location = {x: 20, y: Math.floor(window.innerHeight / 2)}
         this.velocity = App.config.hero.velocity
         this.createSprite();
+        this.createBody()
         this.dy = 0
     }
 
@@ -19,15 +22,24 @@ export class Hero {
                 App.res("exhaust3"),
                 App.res("exhaust4")
             ]);
-            this.setSpriteLocation()
             this.sprite.loop = true;
             this.sprite.animationSpeed = 0.1;
             this.sprite.play();
 
-            this.shipSprite = new PIXI.Sprite(App.res('hero'))
-            this.setShipLocation()
-
+            this.shipSprite = new PIXI.Sprite(App.res('hero1'))
+            this.sprite.x = 0
+            this.sprite.y = -this.sprite.height / 2
+            this.shipSprite.x = this.sprite.width
+            this.shipSprite.y = -this.shipSprite.height / 2
+            this.container.x = 20
+            this.container.y = this.location.y
             this.container.addChild(this.sprite, this.shipSprite)
+    }
+
+    createBody() {
+        this.body = Matter.Bodies.rectangle(this.container.x + this.shipSprite.width / 2, this.container.y, this.shipSprite.width, this.shipSprite.height, {friction: 0})
+        Matter.World.add(App.physics.world, this.body)
+        this.body.gameHero = this
     }
 
     setSpriteLocation() {
@@ -50,7 +62,6 @@ export class Hero {
             }
             
         }
-        // this.update()
     }
 
     moveDown() {
@@ -73,12 +84,12 @@ export class Hero {
     }
 
     update(dt) {
-        const increment = (this.dy * this.velocity * dt.deltaTime)
-        if (this.location.y >= (this.sprite.height - increment) && this.location.y <= (window.innerHeight - this.sprite.height - increment)) {
-            
-            this.location.y += increment
-        }
-        this.setSpriteLocation()
-        this.setShipLocation()
+        // const increment = (this.dy * this.velocity * dt.deltaTime)
+        // if (this.sprite) {
+        //     if (this.container.y >= (this.sprite.height - increment) && this.container.y <= (window.innerHeight - this.sprite.height - increment)) {
+        //         this.container.y += increment
+        //         Matter.Body.setPosition(this.body, {x: this.body.position.x, y: this.body.position.y - increment})
+        //     }
+        // }
     }
 }
