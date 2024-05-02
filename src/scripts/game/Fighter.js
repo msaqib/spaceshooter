@@ -50,8 +50,6 @@ export class Fighter {
     setShipLocation() {
         this.shipSprite.x = this.sprite.x + this.sprite.width
         this.shipSprite.y = this.location.y - this.shipSprite.height / 2
-        // this.shipSprite.anchor.set(1, 1)
-        // this.shipSprite.rotation = -Math.PI /2
     }
 
     createBody() {
@@ -64,22 +62,22 @@ export class Fighter {
         const increment = (this.velocity * dt.deltaTime)
         
         if(this.body) {
-            // console.log('Moving from (', this.body.position.x, ', ', this.body.position.y)
             if (this.body.position.x < -this.container.width) {
                 App.app.ticker.remove(this.update, this)
                 Matter.World.remove(App.physics.world, this.body)
                 this.container.destroy()
-                console.log('Size ', App.physics.world.bodies.length)
                 this.body = null
             }
             else {
                 this.container.x -= increment
                 Matter.Body.setPosition(this.body, {x: this.body.position.x - increment, y: this.body.position.y})
-                // console.log('Moving to (', this.body.position.x, ', ', this.body.position.y)
                 this.container.x = this.body.position.x - this.container.width / 2
-                // this.container.y = this.body.position.y - this.container.height / 2
             }
         }
+        
+    }
+
+    destroy() {
         
     }
 }

@@ -92,4 +92,13 @@ export class Hero {
         //     }
         // }
     }
+
+    destroy() {
+        App.app.ticker.remove(this.update, this)
+        Matter.World.remove(App.physics.world, this.body)
+        this.sprite.destroy()
+        this.shipSprite.destroy()
+        this.sprite = null
+        this.shipSprite = null
+    }
 }

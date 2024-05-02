@@ -35,11 +35,11 @@ export class GameScene extends Scene {
         const hero = colliders.find((body) => body.gameHero)
         const fighter = colliders.find((body) => body.gameFighter)
         if (hero && fighter) {
-            this.explode()
+            this.explode(fighter)
         }
     }
 
-    explode() {
+    explode(fighter) {
         let names = []
             for (let i = 1; i < 12 ; i++) {
                 const name = `Explosion1_${i}`
@@ -52,6 +52,8 @@ export class GameScene extends Scene {
             this.sprite.position.x = this.hero.container.x + this.hero.sprite.width + this.hero.shipSprite.width / 2 - this.sprite.width / 2
             this.sprite.position.y = this.hero.container.y  - this.sprite.height / 2 
             this.container.addChild(this.sprite)
+            this.hero.destroy()
+            // fighter.destroy()
     }
 
     update(dt) {
