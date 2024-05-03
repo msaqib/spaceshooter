@@ -10,6 +10,8 @@ export class Hero {
         this.createSprite();
         this.createBody()
         this.dy = 0
+        this.chup = this.chup.bind(this)
+        this.uda = this.uda.bind(this)
     }
 
     createSprite() {
@@ -91,6 +93,34 @@ export class Hero {
         //         Matter.Body.setPosition(this.body, {x: this.body.position.x, y: this.body.position.y - increment})
         //     }
         // }
+    }
+
+    explode(fighter) {
+        let names = []
+        for (let i = 1; i < 12 ; i++) {
+            const name = `Explosion1_${i}`
+            names.push(App.res(name))
+        }
+        this.flameSprite = new PIXI.AnimatedSprite(names);
+        this.flameSprite.loop = false;
+        this.flameSprite.animationSpeed = 0.1;
+        this.flameSprite.play();
+        this.flameSprite.position.x = this.container.x + this.sprite.width + this.shipSprite.width / 2 - this.flameSprite.width / 2
+        this.flameSprite.position.y = - this.flameSprite.height / 2 
+        this.container.addChild(this.flameSprite)
+        App.app.ticker.add(this.chup)
+        this.flameSprite.onComplete = this.uda
+    }
+
+    chup() {
+        if (this.flameSprite.currentFrame >= 4) {
+            this.destroy()
+            App.app.ticker.remove(this.chup)
+        }
+    }
+
+    uda() {
+        this.flameSprite.destroy()
     }
 
     destroy() {

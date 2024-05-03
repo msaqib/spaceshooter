@@ -13,10 +13,10 @@ export const Config = {
         velocity: 2
     },
     fighter: {
-        velocity: 2,
+        velocity: 0.5,
         probability: 0.015,
-        minimumSpacing: 250,
-        maximumSpacing: 300
+        minimumSpacing: 250000,
+        maximumSpacing: 300000
     },
     enemy: {
         velocity: 2,

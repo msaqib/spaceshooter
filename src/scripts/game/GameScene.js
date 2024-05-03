@@ -16,9 +16,9 @@ export class GameScene extends Scene {
         this.nextSpacing = Math.floor(Math.random()*( App.config.fighter.maximumSpacing - App.config.fighter.minimumSpacing)) + App.config.fighter.minimumSpacing
         this.channelWidth = Math.floor(window.innerHeight/this.numChannels)
         this.createFighters()
-        // this.createFighter(600, Math.floor(window.innerHeight / 2))
         this.registerEvents()
-        // this.explode()
+        // this.chup = this.chup.bind(this)
+        // this.uda = this.uda.bind(this)
     }
 
     createBackground() {
@@ -34,27 +34,44 @@ export class GameScene extends Scene {
         const colliders = [event.pairs[0].bodyA, event.pairs[0].bodyB]
         const hero = colliders.find((body) => body.gameHero)
         const fighter = colliders.find((body) => body.gameFighter)
+        const fighterIndex = colliders.findIndex( (body) => body.gameFighter)
         if (hero && fighter) {
-            this.explode(fighter)
+            this.explode(colliders[fighterIndex].gameFighter)
         }
     }
 
     explode(fighter) {
-        let names = []
-            for (let i = 1; i < 12 ; i++) {
-                const name = `Explosion1_${i}`
-                names.push(App.res(name))
-            }
-            this.sprite = new PIXI.AnimatedSprite(names);
-            this.sprite.loop = false;
-            this.sprite.animationSpeed = 0.1;
-            this.sprite.play();
-            this.sprite.position.x = this.hero.container.x + this.hero.sprite.width + this.hero.shipSprite.width / 2 - this.sprite.width / 2
-            this.sprite.position.y = this.hero.container.y  - this.sprite.height / 2 
-            this.container.addChild(this.sprite)
-            this.hero.destroy()
-            // fighter.destroy()
+        console.log('fly away')
+        this.hero.explode()
+        fighter.explode()
+        // let names = []
+        //     for (let i = 1; i < 12 ; i++) {
+        //         const name = `Explosion1_${i}`
+        //         names.push(App.res(name))
+        //     }
+        //     this.sprite = new PIXI.AnimatedSprite(names);
+        //     this.sprite.loop = false;
+        //     this.sprite.animationSpeed = 0.1;
+        //     this.sprite.play();
+        //     this.sprite.position.x = this.hero.container.x + this.hero.sprite.width + this.hero.shipSprite.width / 2 - this.sprite.width / 2
+        //     this.sprite.position.y = this.hero.container.y  - this.sprite.height / 2 
+        //     this.container.addChild(this.sprite)
+        //     App.app.ticker.add(this.chup)
+        //     this.sprite.onComplete = this.uda
+        //     console.log(fighter)
+        //     fighter.destroy()
     }
+
+    // chup() {
+    //     if (this.sprite.currentFrame >= 4) {
+    //         this.hero.destroy()
+    //         App.app.ticker.remove(this.chup)
+    //     }
+    // }
+
+    // uda() {
+    //     this.sprite.destroy()
+    // }
 
     update(dt) {
         super.update(dt)

@@ -10,6 +10,9 @@ export class Fighter {
         this.createSprite();
         this.createBody()
         this.dy = 0
+        this.chup = this.chup.bind(this)
+        this.uda = this.uda.bind(this)
+        this.exploding = false
     }
 
     createSprite() {
@@ -61,7 +64,7 @@ export class Fighter {
     move(dt) {
         const increment = (this.velocity * dt.deltaTime)
         
-        if(this.body) {
+        if(this.body && !this.exploding) {
             if (this.body.position.x < -this.container.width) {
                 App.app.ticker.remove(this.update, this)
                 Matter.World.remove(App.physics.world, this.body)
@@ -77,7 +80,42 @@ export class Fighter {
         
     }
 
+    explode(fighter) {
+        this.exploding = true
+        App.app.ticker.remove(this.update)
+        let names = []
+        for (let i = 1; i < 12 ; i++) {
+            const name = `Explosion1_${i}`
+            names.push(App.res(name))
+        }
+        this.flameSprite = new PIXI.AnimatedSprite(names);
+        this.flameSprite.loop = false;
+        this.flameSprite.animationSpeed = 0.1;
+        this.flameSprite.play();
+        this.flameSprite.position.x = this.shipSprite.width / 2 - this.flameSprite.width / 2
+        this.flameSprite.position.y = - this.flameSprite.height / 2 
+        this.container.addChild(this.flameSprite)
+        App.app.ticker.add(this.chup)
+        this.flameSprite.onComplete = this.uda
+    }
+
+    chup() {
+        if (this.flameSprite.currentFrame >= 4) {
+            this.destroy()
+            App.app.ticker.remove(this.chup)
+        }
+    }
+
+    uda() {
+        this.flameSprite.destroy()
+    }
+
     destroy() {
-        
+        Matter.World.remove(App.physics.world, this.body)
+        this.sprite.destroy()
+        this.shipSprite.destroy()
+        this.sprite = null
+        this.shipSprite = null
+        this.container.destroy()
     }
 }
