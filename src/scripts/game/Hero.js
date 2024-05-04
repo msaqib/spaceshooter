@@ -55,8 +55,8 @@ export class Hero {
     }
 
     moveUp() {
-        if (this.dy != -1) {
-            this.dy = -1
+        if (this.dy != 1) {
+            this.dy = 1
             if (!this.ticker) {
                 this.ticker = new PIXI.Ticker
                 this.ticker.add(this.update.bind(this))
@@ -67,8 +67,8 @@ export class Hero {
     }
 
     moveDown() {
-        if (this.dy != 1) {
-            this.dy = 1
+        if (this.dy != -1) {
+            this.dy = -1
 
             if (!this.ticker) {
                 this.ticker = new PIXI.Ticker
@@ -86,13 +86,17 @@ export class Hero {
     }
 
     update(dt) {
-        // const increment = (this.dy * this.velocity * dt.deltaTime)
-        // if (this.sprite) {
-        //     if (this.container.y >= (this.sprite.height - increment) && this.container.y <= (window.innerHeight - this.sprite.height - increment)) {
-        //         this.container.y += increment
-        //         Matter.Body.setPosition(this.body, {x: this.body.position.x, y: this.body.position.y - increment})
-        //     }
-        // }
+        const increment = (this.dy * this.velocity * dt.deltaTime)
+        if (!this.shipSprite || this.dy === 1 && this.body.position.y - this.shipSprite.height / 2 <= -increment) {
+            return
+        }
+        if (!this.shipSprite || this.dy === -1 && window.innerHeight - this.body.position.y - this.shipSprite.height / 2 <= -increment) {
+            return
+        }
+        if (this.sprite) {
+            Matter.Body.setPosition(this.body, {x: this.body.position.x, y: this.body.position.y - increment})
+            this.container.y = this.body.position.y
+        }
     }
 
     explode(fighter) {
