@@ -5,7 +5,6 @@ import * as  Tools from "../system/Tools";
 import { Fighters } from "./Fighters";
 import { App } from "../system/App";
 import * as Matter from 'matter-js'
-import * as PIXI from 'pixi.js'
 
 export class GameScene extends Scene {
     create() {
@@ -17,8 +16,6 @@ export class GameScene extends Scene {
         this.channelWidth = Math.floor(window.innerHeight/this.numChannels)
         this.createFighters()
         this.registerEvents()
-        // this.chup = this.chup.bind(this)
-        // this.uda = this.uda.bind(this)
     }
 
     createBackground() {
@@ -41,43 +38,16 @@ export class GameScene extends Scene {
     }
 
     explode(fighter) {
-        console.log('fly away')
         this.hero.explode()
         fighter.explode()
-        // let names = []
-        //     for (let i = 1; i < 12 ; i++) {
-        //         const name = `Explosion1_${i}`
-        //         names.push(App.res(name))
-        //     }
-        //     this.sprite = new PIXI.AnimatedSprite(names);
-        //     this.sprite.loop = false;
-        //     this.sprite.animationSpeed = 0.1;
-        //     this.sprite.play();
-        //     this.sprite.position.x = this.hero.container.x + this.hero.sprite.width + this.hero.shipSprite.width / 2 - this.sprite.width / 2
-        //     this.sprite.position.y = this.hero.container.y  - this.sprite.height / 2 
-        //     this.container.addChild(this.sprite)
-        //     App.app.ticker.add(this.chup)
-        //     this.sprite.onComplete = this.uda
-        //     console.log(fighter)
-        //     fighter.destroy()
     }
-
-    // chup() {
-    //     if (this.sprite.currentFrame >= 4) {
-    //         this.hero.destroy()
-    //         App.app.ticker.remove(this.chup)
-    //     }
-    // }
-
-    // uda() {
-    //     this.sprite.destroy()
-    // }
 
     update(dt) {
         super.update(dt)
         this.bg.update(dt.deltaTime);
         this.interval += dt.deltaTime
         this.fighters.update(dt)
+        this.hero.update(dt)
     }
 
     createHero() {
@@ -89,10 +59,35 @@ export class GameScene extends Scene {
         const down = Tools.Tools.keyboard('ArrowDown')
         down.press = this.hero.moveDown.bind(this.hero)
         down.release = this.hero.straighten.bind(this.hero)
+        this.hero.shipSprite.once('die', ()=> {
+            // stats.livesRemaining--
+            // if(stats.livesRemaining > 0) {
+                console.log('chutty time')
+                this.hero.nullify()
+                App.scenes.start('Game')
+            // }
+            // else {
+                // App.scenes.start('gameOver')
+                // stats.reset()
+            // }
+        })
+        this.id++
     }
 
     createFighters() {
         this.fighters = new Fighters()
         this.container.addChild(this.fighters.container)
+    }
+
+    listTickerCallbacks(ticker) {
+        const callbacks = [];
+        let current = ticker._head; // Start from the head of the linked list
+    
+        while (current) {
+            callbacks.push(current.fn); // Add the callback function to the list
+            current = current.next; // Move to the next item in the list
+        }
+    
+        return callbacks;
     }
 }

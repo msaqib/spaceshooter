@@ -5,6 +5,7 @@ import {sound} from '@pixi/sound'
 
 export class Hero {
     constructor() {
+        console.log('live')
         this.location = {x: 20, y: Math.floor(window.innerHeight / 2)}
         this.velocity = App.config.hero.velocity
         this.createSprite();
@@ -57,40 +58,26 @@ export class Hero {
     moveUp() {
         if (this.dy != 1) {
             this.dy = 1
-            if (!this.ticker) {
-                this.ticker = new PIXI.Ticker
-                this.ticker.add(this.update.bind(this))
-                this.ticker.start()
-            }
-            
         }
     }
 
     moveDown() {
         if (this.dy != -1) {
             this.dy = -1
-
-            if (!this.ticker) {
-                this.ticker = new PIXI.Ticker
-                this.ticker.add(this.update.bind(this))
-                this.ticker.start()
-            }
         }
     }
 
     straighten() {
         this.dy = 0
-        this.ticker.remove(this.update)
-        this.ticker.destroy()
-        this.ticker = null
     }
 
     update(dt) {
+        console.log(this.sprite, this.shipSprite)
         const increment = (this.dy * this.velocity * dt.deltaTime)
-        if (!this.shipSprite || this.dy === 1 && this.body.position.y - this.shipSprite.height / 2 <= -increment) {
+        if (!this.shipSprite || (this.dy === 1 && this.body.position.y - this.shipSprite.height / 2 <= -increment)) {
             return
         }
-        if (!this.shipSprite || this.dy === -1 && window.innerHeight - this.body.position.y - this.shipSprite.height / 2 <= -increment) {
+        if (!this.shipSprite || (this.dy === -1 && window.innerHeight - this.body.position.y - this.shipSprite.height / 2 <= -increment)) {
             return
         }
         if (this.sprite) {
@@ -99,7 +86,8 @@ export class Hero {
         }
     }
 
-    explode(fighter) {
+    explode() {
+        console.log(this, this.sprite, this.shipSprite, this.flameSprite)
         let names = []
         for (let i = 1; i < 12 ; i++) {
             const name = `Explosion1_${i}`
@@ -117,20 +105,29 @@ export class Hero {
     }
 
     chup() {
+        console.log('chup')
         if (this.flameSprite.currentFrame >= 4) {
-            this.destroy()
             App.app.ticker.remove(this.chup)
         }
     }
 
     uda() {
+        console.log('uda')
+        this.destroy()
         this.flameSprite.destroy()
+        this.flameSprite = null
     }
 
     destroy() {
+        console.log('destroy')
         App.app.ticker.remove(this.update, this)
         Matter.World.remove(App.physics.world, this.body)
         this.sprite.destroy()
+        this.shipSprite.emit("die");
+    }
+
+    nullify() {
+        console.log('nullify')
         this.shipSprite.destroy()
         this.sprite = null
         this.shipSprite = null
