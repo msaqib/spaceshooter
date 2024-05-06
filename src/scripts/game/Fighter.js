@@ -10,8 +10,8 @@ export class Fighter {
         this.createSprite();
         this.createBody()
         this.dy = 0
-        this.chup = this.chup.bind(this)
-        this.uda = this.uda.bind(this)
+        this.halfFlame = this.halfFlame.bind(this)
+        this.flameGone = this.flameGone.bind(this)
         this.exploding = false
     }
 
@@ -26,11 +26,6 @@ export class Fighter {
             App.res("exhaust4")
         ]);
         this.shipSprite = new PIXI.Sprite(App.res('Ship1'))
-        // this.shipSprite.x = 0
-        // this.shipSprite.y = 0//-this.shipSprite.height / 2
-        // this.shipSprite.anchor.set(0.5, 0.5)
-        // this.shipSprite.rotation = -Math.PI /2
-        // this.sprite.y = - this.sprite.width /2
         
         this.sprite.loop = true;
         this.sprite.animationSpeed = 0.1;
@@ -42,7 +37,6 @@ export class Fighter {
         this.shipSprite.y = -this.shipSprite.height/2
         this.sprite.x = this.shipSprite.width
         this.sprite.y = -this.shipSprite.height/2
-        // App.app.ticker.add(this.update.bind(this))
     }
 
     setSpriteLocation() {
@@ -57,7 +51,7 @@ export class Fighter {
 
     createBody() {
         this.body = Matter.Bodies.rectangle(this.container.x + this.container.width / 2, this.container.y, this.container.width, this.container.height, {friction: 0})
-        Matter.World.add(App.physics.world, this.body)
+        Matter.Composite.add(App.physics.world, this.body)
         this.body.gameFighter = this
     }
 
@@ -67,7 +61,7 @@ export class Fighter {
         if(this.body && !this.exploding) {
             if (this.body.position.x < -this.container.width) {
                 App.app.ticker.remove(this.update, this)
-                Matter.World.remove(App.physics.world, this.body)
+                Matter.Composite.remove(App.physics.world, this.body)
                 this.container.destroy()
                 this.body = null
             }
@@ -81,6 +75,7 @@ export class Fighter {
     }
 
     explode(fighter) {
+        Matter.Composite.remove(App.physics.world, this.body)
         this.exploding = true
         App.app.ticker.remove(this.update)
         let names = []
@@ -95,27 +90,30 @@ export class Fighter {
         this.flameSprite.position.x = this.shipSprite.width / 2 - this.flameSprite.width / 2
         this.flameSprite.position.y = - this.flameSprite.height / 2 
         this.container.addChild(this.flameSprite)
-        App.app.ticker.add(this.chup)
-        this.flameSprite.onComplete = this.uda
+        App.app.ticker.add(this.halfFlame)
+        this.flameSprite.onComplete = this.flameGone
     }
 
-    chup() {
+    halfFlame() {
         if (this.flameSprite.currentFrame >= 4) {
             this.destroy()
-            App.app.ticker.remove(this.chup)
+            App.app.ticker.remove(this.halfFlame)
         }
     }
 
-    uda() {
+    flameGone() {
         this.flameSprite.destroy()
-    }
-
-    destroy() {
-        Matter.World.remove(App.physics.world, this.body)
+        this.container.destroy()
         this.sprite.destroy()
         this.shipSprite.destroy()
         this.sprite = null
         this.shipSprite = null
-        this.container.destroy()
+    }
+
+    destroy() {
+        if (this.sprite) {
+            this.sprite.visible = false
+            this.shipSprite.visible = false
+        }
     }
 }

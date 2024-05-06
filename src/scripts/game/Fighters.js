@@ -1,6 +1,7 @@
 import * as PIXI from "pixi.js";
 import { App } from "../system/App";
 import { Fighter } from "./Fighter";
+import * as Matter from 'matter-js'
 
 export class Fighters {
     constructor() {
@@ -45,7 +46,10 @@ export class Fighters {
     }
 
     destroy() {
-        this.fighters.forEach( (fighter) => fighter.destroy())
+        this.fighters.forEach( (fighter) => {
+            Matter.Composite.remove(App.physics.world, fighter.body)
+            fighter.destroy()
+    })
         this.container.destroy()
     }
 

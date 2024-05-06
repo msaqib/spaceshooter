@@ -16,6 +16,7 @@ export class GameScene extends Scene {
         this.channelWidth = Math.floor(window.innerHeight/this.numChannels)
         this.createFighters()
         this.registerEvents()
+        
     }
 
     createBackground() {
@@ -24,7 +25,8 @@ export class GameScene extends Scene {
     }
 
     registerEvents() {
-        Matter.Events.on(App.physics, 'collisionStart', this.onCollisionStart.bind(this))
+        this.boundOnCollisionStart = this.onCollisionStart.bind(this);
+        Matter.Events.on(App.physics, 'collisionStart', this.boundOnCollisionStart)
     }
 
     onCollisionStart(event) {
@@ -38,8 +40,8 @@ export class GameScene extends Scene {
     }
 
     explode(fighter) {
-        this.hero.explode()
         fighter.explode()
+        this.hero.explode()
     }
 
     update(dt) {
@@ -47,7 +49,6 @@ export class GameScene extends Scene {
         this.bg.update(dt.deltaTime);
         this.interval += dt.deltaTime
         this.fighters.update(dt)
-        this.hero.update(dt)
     }
 
     createHero() {
@@ -62,8 +63,11 @@ export class GameScene extends Scene {
         this.hero.shipSprite.once('die', ()=> {
             // stats.livesRemaining--
             // if(stats.livesRemaining > 0) {
-                console.log('chutty time')
-                this.hero.nullify()
+                Matter.Events.off(App.physics, 'collisionStart', this.boundOnCollisionStart);
+                this.hero = null
+                this.fighters.destroy()
+                this.fighters = null
+                // this.hero.nullify()
                 App.scenes.start('Game')
             // }
             // else {
@@ -77,17 +81,5 @@ export class GameScene extends Scene {
     createFighters() {
         this.fighters = new Fighters()
         this.container.addChild(this.fighters.container)
-    }
-
-    listTickerCallbacks(ticker) {
-        const callbacks = [];
-        let current = ticker._head; // Start from the head of the linked list
-    
-        while (current) {
-            callbacks.push(current.fn); // Add the callback function to the list
-            current = current.next; // Move to the next item in the list
-        }
-    
-        return callbacks;
     }
 }
