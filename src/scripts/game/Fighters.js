@@ -47,8 +47,10 @@ export class Fighters {
 
     destroy() {
         this.fighters.forEach( (fighter) => {
-            Matter.Composite.remove(App.physics.world, fighter.body)
-            fighter.destroy()
+            if (fighter.body) {
+                Matter.Composite.remove(App.physics.world, fighter.body)
+                fighter.destroy()
+            }
     })
         this.container.destroy()
     }

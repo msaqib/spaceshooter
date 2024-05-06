@@ -133,6 +133,7 @@ export class Hero {
     //     }
 
         explode(fighter) {
+            sound.play('explosion')
             Matter.Composite.remove(App.physics.world, this.body)
             this.exploding = true
             App.app.ticker.remove(this.update)

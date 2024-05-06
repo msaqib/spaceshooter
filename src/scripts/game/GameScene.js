@@ -5,6 +5,7 @@ import * as  Tools from "../system/Tools";
 import { Fighters } from "./Fighters";
 import { App } from "../system/App";
 import * as Matter from 'matter-js'
+import {sound} from '@pixi/sound'
 
 export class GameScene extends Scene {
     create() {
@@ -35,6 +36,7 @@ export class GameScene extends Scene {
         const fighter = colliders.find((body) => body.gameFighter)
         const fighterIndex = colliders.findIndex( (body) => body.gameFighter)
         if (hero && fighter) {
+            this.engineSound.stop('engine')
             this.explode(colliders[fighterIndex].gameFighter)
         }
     }
@@ -60,6 +62,7 @@ export class GameScene extends Scene {
         const down = Tools.Tools.keyboard('ArrowDown')
         down.press = this.hero.moveDown.bind(this.hero)
         down.release = this.hero.straighten.bind(this.hero)
+        this.engineSound = sound.play('engine', {loop:true})
         this.hero.shipSprite.once('die', ()=> {
             // stats.livesRemaining--
             // if(stats.livesRemaining > 0) {
