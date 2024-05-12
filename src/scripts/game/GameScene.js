@@ -43,7 +43,6 @@ export class GameScene extends Scene {
                 sound.play('explosion')
                 this.hero.destroyShot(shot)
                 this.explodeFighter(fighterObj)
-                this.fighters.removeFighter(fighterObj)
             }
         }
     }
