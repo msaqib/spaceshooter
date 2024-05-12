@@ -6,6 +6,7 @@ import { Fighters } from "./Fighters";
 import { App } from "../system/App";
 import * as Matter from 'matter-js'
 import {sound} from '@pixi/sound'
+import { Shoot } from "./Shoot";
 
 export class GameScene extends Scene {
     create() {
@@ -13,8 +14,6 @@ export class GameScene extends Scene {
         this.createHero();
         this.numChannels = 9
         this.interval = 0
-        this.nextSpacing = Math.floor(Math.random()*( App.config.fighter.maximumSpacing - App.config.fighter.minimumSpacing)) + App.config.fighter.minimumSpacing
-        this.channelWidth = Math.floor(window.innerHeight/this.numChannels)
         this.createFighters()
         this.registerEvents()
         
@@ -64,21 +63,21 @@ export class GameScene extends Scene {
         down.release = this.hero.straighten.bind(this.hero)
         this.engineSound = sound.play('engine', {loop:true})
         this.hero.shipSprite.once('die', ()=> {
-            // stats.livesRemaining--
-            // if(stats.livesRemaining > 0) {
-                Matter.Events.off(App.physics, 'collisionStart', this.boundOnCollisionStart);
-                this.hero = null
-                this.fighters.destroy()
-                this.fighters = null
-                // this.hero.nullify()
-                App.scenes.start('Game')
-            // }
-            // else {
-                // App.scenes.start('gameOver')
-                // stats.reset()
-            // }
+            Matter.Events.off(App.physics, 'collisionStart', this.boundOnCollisionStart);
+            this.hero = null
+            this.fighters.destroy()
+            this.fighters = null
+            App.scenes.start('Game')
         })
-        this.id++
+
+        const shoot = Tools.Tools.keyboard(' ')
+        shoot.press = this.shoot.bind(this)
+    }
+
+    shoot() {
+        // this.shoot = new Shoot()
+        // App.app.stage.addChild(this.shoot.container)
+        this.hero.initShot()
     }
 
     createFighters() {

@@ -12,7 +12,6 @@ export class Fighter {
         this.dy = 0
         this.halfFlame = this.halfFlame.bind(this)
         this.flameGone = this.flameGone.bind(this)
-        this.exploding = false
     }
 
     createSprite() {
@@ -58,10 +57,11 @@ export class Fighter {
     move(dt) {
         const increment = (this.velocity * dt.deltaTime)
         
-        if(this.body && !this.exploding) {
+        if(this.body) {
             if (this.body.position.x < -this.container.width) {
                 App.app.ticker.remove(this.update, this)
                 Matter.Composite.remove(App.physics.world, this.body)
+                this.shipSprite.emit("gone")
                 this.container.destroy()
                 this.body = null
             }
@@ -76,7 +76,6 @@ export class Fighter {
 
     explode(fighter) {
         Matter.Composite.remove(App.physics.world, this.body)
-        this.exploding = true
         App.app.ticker.remove(this.update)
         let names = []
         for (let i = 1; i < 12 ; i++) {

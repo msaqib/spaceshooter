@@ -18,8 +18,7 @@ export const Config = {
         minimumSpacing: 250,
         maximumSpacing: 300
     },
-    enemy: {
-        velocity: 2,
-        probability: 0.01
+    shot: {
+        velocity: 5
     }
 }
