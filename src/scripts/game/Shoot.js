@@ -24,9 +24,7 @@ export class Shoot {
     }
 
     update(dt) {
-        // console.log(this.body.position)
         const increment = this.velocity / dt.deltaTime
-        // console.log(this.velocity, dt.deltaTime, increment)
         this.container.x += increment
         if (this.sprite) {
             if (this.body.position.x > window.innerWidth) {
@@ -40,6 +38,7 @@ export class Shoot {
     }
 
     destroy() {
+        Matter.Composite.remove(App.physics.world, this.body)
         this.sprite.destroy()
         this.container.destroy()
     }

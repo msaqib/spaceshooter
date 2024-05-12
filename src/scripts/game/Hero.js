@@ -46,16 +46,6 @@ export class Hero {
         this.body.gameHero = this
     }
 
-    setSpriteLocation() {
-        this.sprite.x = 20;
-        this.sprite.y = this.location.y - this.sprite.height / 2;
-    }
-
-    setShipLocation() {
-        this.shipSprite.x = this.sprite.x
-        this.shipSprite.y = this.location.y - this.shipSprite.height / 2
-    }
-
     moveUp() {
         if (this.dy != 1) {
             this.dy = 1
@@ -132,6 +122,7 @@ export class Hero {
     }
 
     initShot() {
+        sound.play('laser')
         this.shot = new PIXI.AnimatedSprite([App.res('shot1_1'), App.res('shot1_2'), App.res('shot1_3'), App.res('shot1_4')])
         this.shot.onComplete = this.completeShot.bind(this)
         this.shot.loop = false
@@ -155,8 +146,10 @@ export class Hero {
     }
 
     destroyShot(shot) {
-        const index = this.shots.findIndex(s => shot)
-        this.shots[index].destroy()
-        this.shots.splice(index, 1)
+        const index = this.shots.findIndex(s => s.body.id === shot.id)
+        if (index !== -1) {
+            this.shots[index].destroy()
+            this.shots.splice(index, 1)
+        }
     }
 }

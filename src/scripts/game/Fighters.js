@@ -28,11 +28,6 @@ export class Fighters {
         })
     }
 
-    removeFighter(fighter) {
-        const index = this.fighters.findIndex(f => fighter)
-        // this.fighters.splice(index, 1)
-    }
-
     getRandomData() {
         const channel = Math.floor(Math.random() * this.numChannels - Math.floor(this.numChannels / 2))
         const location = {x: window.innerWidth - 20, y: window.innerHeight / 2 + channel * this.channelWidth}

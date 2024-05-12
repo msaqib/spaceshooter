@@ -1,7 +1,6 @@
 import * as PIXI from "pixi.js";
 import { App } from '../system/App';
 import * as Matter from 'matter-js'
-import {sound} from '@pixi/sound'
 
 export class Fighter {
     constructor(x, y, velocity) {
@@ -105,6 +104,7 @@ export class Fighter {
         this.container.destroy()
         this.sprite.destroy()
         this.shipSprite.destroy()
+        this.shipSprite.emit('gone')
         this.sprite = null
         this.shipSprite = null
         this.body = null

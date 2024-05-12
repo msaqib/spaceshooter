@@ -6,7 +6,6 @@ import { Fighters } from "./Fighters";
 import { App } from "../system/App";
 import * as Matter from 'matter-js'
 import {sound} from '@pixi/sound'
-import { Shoot } from "./Shoot";
 
 export class GameScene extends Scene {
     create() {
@@ -41,9 +40,10 @@ export class GameScene extends Scene {
                 this.explodeHeroAndFighter()
             }
             else {
+                sound.play('explosion')
                 this.hero.destroyShot(shot)
-                this.fighters.removeFighter(fighterObj)
                 this.explodeFighter(fighterObj)
+                this.fighters.removeFighter(fighterObj)
             }
         }
     }
@@ -87,8 +87,6 @@ export class GameScene extends Scene {
     }
 
     shoot() {
-        // this.shoot = new Shoot()
-        // App.app.stage.addChild(this.shoot.container)
         this.hero.initShot()
     }
 
