@@ -16,7 +16,6 @@ export class GameScene extends Scene {
         this.interval = 0
         this.createFighters()
         this.registerEvents()
-        
     }
 
     createBackground() {
@@ -34,13 +33,26 @@ export class GameScene extends Scene {
         const hero = colliders.find((body) => body.gameHero)
         const fighter = colliders.find((body) => body.gameFighter)
         const fighterIndex = colliders.findIndex( (body) => body.gameFighter)
-        if (hero && fighter) {
-            this.engineSound.stop('engine')
-            this.explode(colliders[fighterIndex].gameFighter)
+        const shot = colliders.find( (body) => body.gameShot)
+        if (fighter) {
+            const fighterObj = colliders[fighterIndex].gameFighter
+            if (hero) {
+                this.engineSound.stop('engine')
+                this.explodeHeroAndFighter()
+            }
+            else {
+                this.hero.destroyShot(shot)
+                this.fighters.removeFighter(fighterObj)
+                this.explodeFighter(fighterObj)
+            }
         }
     }
 
-    explode(fighter) {
+    explodeFighter(fighterObj) {
+        fighterObj.explode()
+    }
+
+    explodeHeroAndFighter(fighter) {
         fighter.explode()
         this.hero.explode()
     }

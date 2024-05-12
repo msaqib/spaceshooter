@@ -107,6 +107,7 @@ export class Fighter {
         this.shipSprite.destroy()
         this.sprite = null
         this.shipSprite = null
+        this.body = null
     }
 
     destroy() {

@@ -146,7 +146,17 @@ export class Hero {
         const location = this.shot.toGlobal(new PIXI.Point(0, 0))
         const newShot = new Shoot(location.x, location.y)
         this.shots.push(newShot)
+        newShot.sprite.once('beyond', ()=> {
+            const shotIndex = this.shots.findIndex(s => s === newShot)
+            this.shots.splice(shotIndex, 1)
+        })
         this.container.removeChild(this.shot)
         App.app.stage.addChild(newShot.container)
+    }
+
+    destroyShot(shot) {
+        const index = this.shots.findIndex(s => shot)
+        this.shots[index].destroy()
+        this.shots.splice(index, 1)
     }
 }

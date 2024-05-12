@@ -1,13 +1,15 @@
 import * as PIXI from 'pixi.js'
 import { App } from '../system/App'
+import * as Matter from 'matter-js'
 
 export class Shoot {
     constructor(x, y) {
         this.container = new PIXI.Container()
         this.container.x = x
         this.container.y = y
-        this.shotVelocity = App.config.shot.velocity
-        this.initShot()
+        this.velocity = App.config.shot.velocity
+        this.createShot()
+        this.createBody()
     }
 
     createShot() {
@@ -22,11 +24,23 @@ export class Shoot {
     }
 
     update(dt) {
-        const increment = this.shotVelocity / dt.deltaTime
+        // console.log(this.body.position)
+        const increment = this.velocity / dt.deltaTime
+        // console.log(this.velocity, dt.deltaTime, increment)
         this.container.x += increment
         if (this.sprite) {
-            Matter.Body.setPosition(this.body, {x: this.body.position.x, y: this.body.position.y - increment})
+            if (this.body.position.x > window.innerWidth) {
+                Matter.Composite.remove(App.physics.world, this.body)
+                this.sprite.emit('beyond')
+                this.sprite.destroy()
+            }
+            Matter.Body.setPosition(this.body, {x: this.body.position.x + increment, y: this.body.position.y})
             this.container.y = this.body.position.y
         }
+    }
+
+    destroy() {
+        this.sprite.destroy()
+        this.container.destroy()
     }
 }
