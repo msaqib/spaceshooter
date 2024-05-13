@@ -6,15 +6,24 @@ import { Fighters } from "./Fighters";
 import { App } from "../system/App";
 import * as Matter from 'matter-js'
 import {sound} from '@pixi/sound'
+import { Stats } from "./Stats";
+import { Hud } from "./Hud";
 
 export class GameScene extends Scene {
     create() {
+        this.stats = new Stats()
         this.createBackground();
         this.createHero();
         this.numChannels = 9
         this.interval = 0
         this.createFighters()
         this.registerEvents()
+        this.createHud()
+    }
+
+    createHud() {
+        this.hud = new Hud(this.stats.livesRemaining, this.stats.score)
+        this.container.addChild(this.hud.container)
     }
 
     createBackground() {
@@ -37,9 +46,12 @@ export class GameScene extends Scene {
             const fighterObj = colliders[fighterIndex].gameFighter
             if (hero) {
                 this.engineSound.stop('engine')
-                this.explodeHeroAndFighter()
+                this.explodeHeroAndFighter(fighterObj)
+                this.stats.livesRemaining--
             }
             else {
+                this.stats.score += 10
+                this.hud.update(this.stats.score)
                 sound.play('explosion')
                 this.hero.destroyShot(shot)
                 this.explodeFighter(fighterObj)
@@ -54,6 +66,9 @@ export class GameScene extends Scene {
     explodeHeroAndFighter(fighter) {
         fighter.explode()
         this.hero.explode()
+        this.up.unsubscribe()
+        this.down.unsubscribe()
+        this.shoot.unsubscribe()
     }
 
     update(dt) {
@@ -66,12 +81,12 @@ export class GameScene extends Scene {
     createHero() {
         this.hero = new Hero();
         this.container.addChild(this.hero.container);
-        const up = Tools.Tools.keyboard('ArrowUp')
-        up.press = this.hero.moveUp.bind(this.hero)
-        up.release = this.hero.straighten.bind(this.hero)
-        const down = Tools.Tools.keyboard('ArrowDown')
-        down.press = this.hero.moveDown.bind(this.hero)
-        down.release = this.hero.straighten.bind(this.hero)
+        this.up = Tools.Tools.keyboard('ArrowUp')
+        this.up.press = this.hero.moveUp.bind(this.hero)
+        this.up.release = this.hero.straighten.bind(this.hero)
+        this.down = Tools.Tools.keyboard('ArrowDown')
+        this.down.press = this.hero.moveDown.bind(this.hero)
+        this.down.release = this.hero.straighten.bind(this.hero)
         this.engineSound = sound.play('engine', {loop:true})
         this.hero.shipSprite.once('die', ()=> {
             Matter.Events.off(App.physics, 'collisionStart', this.boundOnCollisionStart);
@@ -81,11 +96,12 @@ export class GameScene extends Scene {
             App.scenes.start('Game')
         })
 
-        const shoot = Tools.Tools.keyboard(' ')
-        shoot.press = this.shoot.bind(this)
+        this.shoot = Tools.Tools.keyboard(' ')
+        this.shoot.press = this.shootHandler.bind(this)
     }
 
-    shoot() {
+    shootHandler() {
+        console.trace()
         this.hero.initShot()
     }
 
