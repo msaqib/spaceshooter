@@ -2,10 +2,14 @@ import { App } from "../system/App"
 export class Stats {
     constructor() {
         if (!Stats.instance) {
-            this.livesRemaining = App.config.hero.lives
-            this.score = 0
+            this.reset()
             Stats.instance = this
         }
         return Stats.instance
+    }
+
+    reset() {
+        this.livesRemaining = App.config.hero.lives
+        this.score = 0
     }
 }

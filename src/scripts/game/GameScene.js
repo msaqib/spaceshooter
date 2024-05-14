@@ -93,7 +93,12 @@ export class GameScene extends Scene {
             this.hero = null
             this.fighters.destroy()
             this.fighters = null
-            App.scenes.start('Game')
+            if (this.stats.livesRemaining === 0) {
+                App.scenes.start('gameOver')
+            }
+            else {
+                App.scenes.start('Game')
+            }            
         })
 
         this.shoot = Tools.Tools.keyboard(' ')
@@ -101,7 +106,6 @@ export class GameScene extends Scene {
     }
 
     shootHandler() {
-        console.trace()
         this.hero.initShot()
     }
 

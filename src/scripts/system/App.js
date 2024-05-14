@@ -18,7 +18,7 @@ class Application {
     start() {
         this.scenes = new ScenesManager();
         this.app.stage.addChild(this.scenes.container)
-        this.scenes.start("Game");
+        this.scenes.start("startScene");
     }
     res(key) {
         return this.loader.resources[key];

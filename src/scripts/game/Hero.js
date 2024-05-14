@@ -3,9 +3,11 @@ import { App } from '../system/App';
 import * as Matter from 'matter-js'
 import {sound} from '@pixi/sound'
 import { Shoot } from "./Shoot";
+import { Stats } from "./Stats";
 
 export class Hero {
     constructor() {
+        this.stats = new Stats()
         this.location = {x: 20, y: Math.floor(window.innerHeight / 2)}
         this.velocity = App.config.hero.velocity
         this.createSprite();
